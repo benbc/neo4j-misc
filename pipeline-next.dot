@@ -1,0 +1,44 @@
+digraph G {
+  subgraph {
+    rank = "source";
+    neo4j_git;
+    rc_git;
+    har_git;
+    rr_git;
+    root_git;
+  }
+  subgraph {
+    rank = "sink";
+    release;
+  }
+  neo4j_git -> linux;
+  neo4j_git -> windows;
+  neo4j_git -> osx;
+  neo4j_git -> outreach;
+  neo4j_git -> compatibility;
+  neo4j_git -> rc;
+  rc_git -> rc;
+  rr_git -> rr;
+  har_git -> har;
+  neo4j_git -> root;
+  root_git -> root;
+
+  linux -> ok;
+  windows -> ok;
+  osx -> ok;
+  ok -> rc;
+
+  rc -> release;
+  rc -> har;
+  rc -> rr;
+
+  root -> release;
+  outreach -> release;
+  compatibility -> release;
+  rr -> release;
+  har -> release;
+
+  ok -> outreach;
+  ok -> compatibility;
+  ok -> root;  
+}
