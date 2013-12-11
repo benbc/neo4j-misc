@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+set -o errexit -o nounset -o xtrace
+
+deb_name=neo4j-enterprise_2.0.0_all.deb
+deb_url=s3://bbc.people.neo4j.org/${deb_name}
+deb_file=/tmp/${deb_name}
+
+apt() {
+    sudo apt-get --quiet --quiet "$@"
+}
+
+(
+    apt update
+    apt upgrade
+    apt install python-pip
+    sudo pip install awscli
+    aws --region=eu-west-1 s3 cp ${deb_url} ${deb_file}
+    sudo dpkg --install --force-depends ${deb_file}
+    apt --fix-broken install
+    sudo sed -i'' -e "s/.*ha\.server_id.*=.*/ha.server_id=${RANDOM}/" /etc/neo4j/neo4j.properties
+    sudo sed -i'' -e "s/.*ha\.initial_hosts.*=.*/ha.initial_hosts=54.228.189.236,54.228.190.23,54.228.190.48,54.228.190.7,54.217.230.121/" /etc/neo4j/neo4j.properties
+    sudo sed -i'' -e "s/.*org\.neo4j\.server\.webserver\.address.*=.*/org.neo4j.server.webserver.address=0.0.0.0/" /etc/neo4j/neo4j-server.properties
+    sudo sed -i'' -e "s/.*org\.neo4j\.server\.database\.mode.*=.*/org.neo4j.server.database.mode=HA/" /etc/neo4j/neo4j-server.properties
+    sudo service neo4j-service restart
+) 2>&1 | tee /var/log/bootstrap.log
