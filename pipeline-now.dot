@@ -1,7 +1,8 @@
-digraph G {
+digraph PipelineNow {
+  label = "Pipeline - Now";
   subgraph {
     rank = "source";
-    neo4j_git;
+    neo4j_git [label="neo4.git"];
     rc_git;
     har_git;
     rr_git;
