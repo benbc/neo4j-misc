@@ -24,5 +24,7 @@ digraph PipelineNext {
 
   rc -> {har rr};
 
-  {rc root outreach compatibility rr har} -> release;
+  {rc root outreach compatibility rr har} -> releaseable;
+
+  {releaseable rc_git} -> release;
 }
