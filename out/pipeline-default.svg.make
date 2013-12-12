@@ -1,4 +1,4 @@
 this := $(lastword $(MAKEFILE_LIST))
 
-out/pipeline-now.svg: pipeline-now.dot $(this)
+out/pipeline-%.svg: pipeline-%.dot $(this)
 	dot $< -Tsvg >$@
