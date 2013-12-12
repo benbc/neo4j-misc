@@ -1,0 +1,41 @@
+digraph PipelineFuture {
+  label = "Pipeline - Future";
+  subgraph {
+    rank = "source";
+    neo4j_git [label="neo4j.git"];
+    har_git;
+    rr_git;
+    release_git;
+    perf_git
+  }
+  subgraph cluster_0 {
+    label = "ITs";
+    linux; windows; osx;
+  } 
+  subgraph cluster_1 {
+    label = "packaging";
+    build_p [label="build"];
+    smoke_p [label="smoke"];
+  }
+  subgraph cluster_2 {
+    label = "robustness";
+    har_git -> ha;
+    rr_git -> recovery;
+  }
+  subgraph cluster_3 {
+    label = "compatibility";
+    oracle_jdk; open_jdk;                     
+  }
+  perf_git -> performance;
+
+  neo4j_git -> fast -> {linux windows osx} -> ok;
+
+  ok -> build_p -> smoke_p -> snapshot_release;
+  ok -> performance -> snapshot_release;
+  ok -> {ha recovery} -> snapshot_release;
+  ok -> {oracle_jdk open_jdk} -> snapshot_release;
+  
+  release_git -> {snapshot_release release};
+  snapshot_release -> {smoke_s[label="smoke"]};  
+  smoke_s -> releaseable -> release -> {smoke_r[label="smoke"]};
+}
