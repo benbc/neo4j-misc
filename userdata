@@ -1,8 +1,8 @@
 #!/bin/bash -eux
 
 app_name=neo4j
-deb_name=neo4j-enterprise_2.0.1_all.deb
-ips=54.195.240.39,54.195.240.41,54.195.240.43,54.195.240.51
+deb_name=neo4j-enterprise_2.0.4_all.deb
+ip=54.75.226.180
 
 deb_url=s3://bbc.people.neo4j.org/${deb_name}
 deb_file=/tmp/${deb_name}
@@ -23,7 +23,7 @@ apt() {
     apt --fix-broken install
     sed -i'' -e "s/.*ha\.server_id.*=.*/ha.server_id=${RANDOM}/" \
         ${config_dir}/neo4j.properties
-    sed -i'' -e "s/.*ha\.initial_hosts.*=.*/ha.initial_hosts=${ips}/" \
+    sed -i'' -e "s/.*ha\.initial_hosts.*=.*/ha.initial_hosts=${ip}/" \
         ${config_dir}/neo4j.properties
     sed -i'' -e "s/.*org\.neo4j\.server\.webserver\.address.*=.*/org.neo4j.server.webserver.address=0.0.0.0/" \
         ${config_dir}/neo4j-server.properties
