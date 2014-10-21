@@ -4,6 +4,8 @@
 # work on the 14.04 cloud image (see
 # https://bugs.launchpad.net/ecryptfs/+bug/1328689).
 
+USERNAME=ben
+
 apt-add-repository --yes ppa:ubuntu-elisp/ppa
 apt-get update
 apt-get upgrade --yes
@@ -11,14 +13,14 @@ apt-get upgrade --yes
 apt-get install --yes ecryptfs-utils git emacs-snapshot maven openjdk-7-jdk
 update-alternatives --set java /usr/lib/jvm/java-7-openjdk-amd64/jre/bin/java
 
-adduser --encrypt-home ben
+adduser --encrypt-home ${USERNAME}
 
-cat <<EOF >/tmp/sudoers.ben
-ben ALL=(ALL) ALL
+cat <<EOF >/tmp/sudoers.${USERNAME}
+${USERNAME} ALL=(ALL) ALL
 EOF
-mv /tmp/sudoers.ben /etc/sudoers.d/ben
+mv /tmp/sudoers.${USERNAME} /etc/sudoers.d/${USERNAME}
 
-cat <<EOF >/tmp/ben-init
+cat <<EOF >/tmp/${USERNAME}-init
 #!/bin/bash -eu
 
 mkdir -p ~/.ssh
@@ -48,12 +50,12 @@ Now you need to
  - cat >~/src/neo-technology/quality-tasks/devenv.local
 EOF-INNER
 EOF
-chmod +x /tmp/ben-init
+chmod +x /tmp/${USERNAME}-init
 
 cat <<EOF
 Now you need to
- - su - ben
- - /tmp/ben-init
+ - su - ${USERNAME}
+ - /tmp/${USERNAME}-init
  - cat >~/.ssh/id_rsa
- - /tmp/ben-init
+ - /tmp/${USERNAME}-init
 EOF
