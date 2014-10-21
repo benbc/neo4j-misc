@@ -1,0 +1,59 @@
+#!/bin/bash -eu
+
+# Use with Ubuntu 12.04 because creating an encrypted home does not
+# work on the 14.04 cloud image (see
+# https://bugs.launchpad.net/ecryptfs/+bug/1328689).
+
+apt-add-repository --yes ppa:ubuntu-elisp/ppa
+apt-get update
+apt-get upgrade --yes
+
+apt-get install --yes ecryptfs-utils git emacs-snapshot maven openjdk-7-jdk
+update-alternatives --set java /usr/lib/jvm/java-7-openjdk-amd64/jre/bin/java
+
+adduser --encrypt-home ben
+
+cat <<EOF >/tmp/sudoers.ben
+ben ALL=(ALL) ALL
+EOF
+mv /tmp/sudoers.ben /etc/sudoers.d/ben
+
+cat <<EOF >/tmp/ben-init
+#!/bin/bash -eu
+
+mkdir -p ~/.ssh
+chmod 600 ~/.ssh/id_rsa
+
+curl https://raw.githubusercontent.com/nojhan/liquidprompt/master/liquidprompt >~/.liquidprompt
+cat <<EOF-INNER >>~/.bashrc
+. ~/.liquidprompt
+export EDITOR=emacs
+export MAVEN_OPTS="-Xmx512m -XX:MaxPermSize=256m"
+EOF-INNER
+. ~/.bashrc
+
+curl -L http://git.io/epre | sh
+mkdir -p ~/src/neo-technology
+git clone git@github.com:neo-technology/quality-tasks.git
+(
+  cd ~/src/neo-technology
+  (
+    cd quality-tasks
+    git submodule init
+    git submodule update
+  )
+)
+cat <<EOF-INNER
+Now you need to
+ - cat >~/src/neo-technology/quality-tasks/devenv.local
+EOF-INNER
+EOF
+chmod +x /tmp/ben-init
+
+cat <<EOF
+Now you need to
+ - su - ben
+ - /tmp/ben-init
+ - cat >~/.ssh/id_rsa
+ - /tmp/ben-init
+EOF
