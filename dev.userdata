@@ -2,7 +2,8 @@
 
 # Use with Ubuntu 12.04 because creating an encrypted home does not
 # work on the 14.04 cloud image (see
-# https://bugs.launchpad.net/ecryptfs/+bug/1328689).
+# https://bugs.launchpad.net/ecryptfs/+bug/1328689). You can safely
+# upgrade to 14.04 after the system is set up.
 
 USERNAME=ben
 
